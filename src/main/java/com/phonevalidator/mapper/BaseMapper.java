@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface BaseMapper<E, D> {
 
-    E toEntity(D dto);
+    E convertDtoToEntity(D dto);
 
-    D toDTO(E entity);
+    D convertEntityToDto(E entity);
 
-    List<E> toEntities(List<D> dtos);
+    List<E> convertDtosTOEntities(List<D> dtos);
 
-    List<D> toDTOs(List<E> entities);
+    List<D> convertEntitiesToDtos(List<E> entities);
 }

@@ -3,7 +3,6 @@ package com.phonevalidator.utils.specification;
 import com.phonevalidator.data.dtos.CustomerDTO;
 import com.phonevalidator.data.entities.Customer;
 import com.phonevalidator.data.enums.PhoneNumberState;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
@@ -11,7 +10,7 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerNumbersSpecification {
+public class CustomerNumbersFilters {
 
     public static Specification<Customer> countriesFilter(List<String> customerPhones) {
 

@@ -3,14 +3,10 @@ package com.phonevalidator.services;
 import com.phonevalidator.data.dtos.CustomerDTO;
 import com.phonevalidator.data.dtos.RequestDTO;
 import com.phonevalidator.data.entities.Customer;
-import com.phonevalidator.mapper.BaseMapper;
 import com.phonevalidator.mapper.CustomerMapper;
 import com.phonevalidator.repostitories.CustomerRepository;
-import com.phonevalidator.utils.specification.CustomerNumbersSpecification;
-import com.phonevalidator.utils.specification.SearchCriteria;
-import com.phonevalidator.utils.specification.SearchKeys;
+import com.phonevalidator.utils.specification.CustomerNumbersFilters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -27,7 +23,9 @@ public class CustomerService {
     private CountryService countryService;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper, CountryService countryService) {
+    public CustomerService(CustomerRepository customerRepository,
+                           CustomerMapper customerMapper,
+                           CountryService countryService) {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
         this.countryService = countryService;
@@ -35,19 +33,19 @@ public class CustomerService {
 
     public List<CustomerDTO> findAll(RequestDTO requestDTO) {
         List<Customer> customers = customerRepository
-                .findAll(CustomerNumbersSpecification
+                .findAll(CustomerNumbersFilters
                         .countriesFilter(Optional.ofNullable(requestDTO.getCountries())
                                 .map(Collection::stream).orElseGet(Stream::empty)
                                 .map(country -> countryService.getCodeByCountry(country))
                                 .collect(Collectors.toList())));
         List<CustomerDTO> customerDTOS = getCustomerDTOS(customers).stream()
-                .filter(CustomerNumbersSpecification.isStateValid(requestDTO.getState()))
+                .filter(CustomerNumbersFilters.isStateValid(requestDTO.getState()))
                 .collect(Collectors.toList());
         return customerDTOS;
     }
 
-    private List<CustomerDTO> getCustomerDTOS(List<Customer> customers) {
-        List<CustomerDTO> customerDTOS = customerMapper.toDTOs(customers);
+    protected List<CustomerDTO> getCustomerDTOS(List<Customer> customers) {
+        List<CustomerDTO> customerDTOS = customerMapper.convertEntitiesToDtos(customers);
         customerDTOS.stream()
                 .map(customerDTO -> {
                     customerDTO.setPhoneNumberState(countryService.isCountryPhoneValid(customerDTO.getPhone()));
