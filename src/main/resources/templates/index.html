@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+ <meta charset="UTF-8"/>
+ <title>Spring Boot Thymeleaf Application - Bootstrap DataTable</title>
+
+ <link th:rel="stylesheet" th:href="@{assets/datatable/datatables.css}"/>
+ <link th:rel="stylesheet" th:href="@{webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
+
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+ <div class="container">
+  <a class="navbar-brand" href="/">Customers Phones</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false" aria-label="Toggle navigation">
+   <span class="navbar-toggler-icon"></span>
+  </button>
+ </div>
+</nav>
+
+<div class="container">
+ <div>
+  <form th:action="@{/}">
+  <table>
+   <tr>
+    <td><label >State</label></td>
+    <td><select th:name="state">
+     <option value="">all</option>
+     <option value="VALID">valid</option>
+     <option value="INVALID">invalid</option>
+    </select></td>
+   </tr>
+   <tr>
+    <td><label >Country</label></td>
+    <td><select th:name="countries" multiple="multiple">
+     <option value="">all</option>
+     <option value="Cameroon">Cameroon</option>
+     <option value="Ethiopia">Ethiopia</option>
+     <option value="Morocco">Morocco</option>
+     <option value="Mozambique">Mozambique</option>
+     <option value="Uganda">Uganda</option>
+    </select></td>
+   </tr>
+   <tr>
+    <td></td>
+    <td><input type="submit" value="Submit"></input></td>
+   </tr>
+  </table>
+  </form>
+ </div>
+ <div class="row">
+  <div class="col-lg-10 mt-5 mb-5">
+   <table id="example" class="table table-bordered table-responsive" style="width: 100%">
+    <thead>
+    <tr>
+     <th>Name</th>
+     <th>Phone</th>
+     <th>Country</th>
+     <th>State</th>
+    </tr>
+    </thead>
+    <tr th:each="customer : ${customersList}">
+     <td th:text="${customer?.name}">name</td>
+     <td th:text="${customer?.phone}">phone</td>
+     <td th:text="${customer?.country}">country</td>
+     <td th:text="${customer?.phoneNumberState}">phoneNumberState</td>
+    </tr>
+   </table>
+  </div>
+ </div>
+</div>
+
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+</body>
+</html>
