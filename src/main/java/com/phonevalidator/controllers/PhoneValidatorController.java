@@ -3,6 +3,7 @@ package com.phonevalidator.controllers;
 import com.phonevalidator.data.dtos.CustomerDTO;
 import com.phonevalidator.data.dtos.RequestDTO;
 import com.phonevalidator.services.CustomerService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class PhoneValidatorController {
         this.customerService = customerService;
     }
 
+    @ApiOperation(value = "The basic api of app - takes optional query parameters for filtration - returns customers numbers with state and country")
     @GetMapping("")
     public ResponseEntity<List<CustomerDTO>> getAllNumbers(RequestDTO requestDTO) {
         return ResponseEntity.ok(customerService.findAll(requestDTO));
