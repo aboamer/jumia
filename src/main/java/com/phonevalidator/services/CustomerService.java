@@ -7,6 +7,7 @@ import com.phonevalidator.mapper.CustomerMapper;
 import com.phonevalidator.repostitories.CustomerRepository;
 import com.phonevalidator.utils.specification.CustomerNumbersFilters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -33,15 +34,23 @@ public class CustomerService {
 
     public List<CustomerDTO> findAll(RequestDTO requestDTO) {
         List<Customer> customers = customerRepository
-                .findAll(CustomerNumbersFilters
-                        .countriesFilter(Optional.ofNullable(requestDTO.getCountries())
-                                .map(Collection::stream).orElseGet(Stream::empty)
-                                .map(country -> countryService.getCodeByCountry(country))
-                                .collect(Collectors.toList())));
+                .findAll(getCountriesFilterSpecification(requestDTO));
         List<CustomerDTO> customerDTOS = getCustomerDTOS(customers).stream()
                 .filter(CustomerNumbersFilters.isStateValid(requestDTO.getState()))
                 .collect(Collectors.toList());
         return customerDTOS;
+    }
+
+    private Specification<Customer> getCountriesFilterSpecification(RequestDTO requestDTO) {
+        return CustomerNumbersFilters
+                .countriesFilter(Optional.ofNullable(getCountries(requestDTO))
+                        .map(Collection::stream).orElseGet(Stream::empty)
+                        .map(country -> countryService.getCodeByCountry(country))
+                        .collect(Collectors.toList()));
+    }
+
+    private List<String> getCountries(RequestDTO requestDTO) {
+        return requestDTO == null ? null :requestDTO.getCountries();
     }
 
     protected List<CustomerDTO> getCustomerDTOS(List<Customer> customers) {

@@ -1,6 +1,7 @@
 package com.phonevalidator.services;
 
 import com.phonevalidator.data.dtos.CountryDTO;
+import com.phonevalidator.data.enums.CountryEnum;
 import com.phonevalidator.data.enums.PhoneNumberState;
 import com.phonevalidator.utils.PhoneNumberRegexValidator;
 import org.apache.commons.lang3.StringUtils;
@@ -40,33 +41,45 @@ public class CountryService {
     private boolean isPhoneRegexValid(String phoneNumber) {
         Map<String, CountryDTO> countryDTOSMap = getCodeCountryMap();
         boolean valid = phoneNumberRegexValidator.validateNumberWithRegex
-                (phoneNumber, countryDTOSMap.get(StringUtils.substringBetween(phoneNumber, "(", ")")).getRegex());
+                (phoneNumber, countryDTOSMap.get(extractCountryCodeFromPhone(phoneNumber)).getRegex());
         return valid;
     }
 
+    private String extractCountryCodeFromPhone(String phoneNumber) {
+        return StringUtils.substringBetween(phoneNumber, "(", ")");
+    }
+
     private boolean isPhoneNumberOrPhoneCodeValid(String phoneNumber) {
-        return StringUtils.isNoneBlank(phoneNumber) && StringUtils.isNoneBlank(StringUtils.substringBetween(phoneNumber, "(", ")")) ;
+        return StringUtils.isNoneBlank(phoneNumber) && StringUtils.isNoneBlank(extractCountryCodeFromPhone(phoneNumber)) ;
     }
 
     public String getCountryByCode(String phoneNumber) {
         Map<String, CountryDTO> countryDTOSMap = getCodeCountryMap();
-        return StringUtils.isBlank(phoneNumber)? "" : countryDTOSMap.get(StringUtils.substringBetween(phoneNumber, "(", ")"))
-                .getCountryName();
+        return isPhoneNumberOrPhoneCodeValid(phoneNumber)? getCountryName(phoneNumber, countryDTOSMap) : "";
+    }
+
+    private String getCountryName(String phoneNumber, Map<String, CountryDTO> countryDTOSMap) {
+        String code = extractCountryCodeFromPhone(phoneNumber);
+        return countryDTOSMap.get(code) == null? "": countryDTOSMap.get(code).getCountryName();
     }
 
     public String getCodeByCountry(String country) {
         Map<String, CountryDTO> countryDTOSMap = getCountryNameCountryMap();
-        return StringUtils.isBlank(country)? "" : countryDTOSMap.get(country).getCountryCode();
+        return StringUtils.isBlank(country)? "" : getCountryCode(country, countryDTOSMap);
+    }
+
+    private String getCountryCode(String country, Map<String, CountryDTO> countryDTOSMap) {
+        return (countryDTOSMap.get(country) == null)? "": countryDTOSMap.get(country).getCountryCode();
     }
 
     private List<CountryDTO> initAndGetCountriesInfo() {
         List<CountryDTO> countryDTOS = new ArrayList<>();
 
-        countryDTOS.add(CountryDTO.builder().countryName("Cameroon").countryCode("237").regex("\\(237\\)\\ ?[2368]\\d{7,8}$").build());
-        countryDTOS.add(CountryDTO.builder().countryName("Ethiopia").countryCode("251").regex("\\(251\\)\\ ?[1-59]\\d{8}$").build());
-        countryDTOS.add(CountryDTO.builder().countryName("Morocco").countryCode("212").regex("\\(212\\)\\ ?[5-9]\\d{8}$").build());
-        countryDTOS.add(CountryDTO.builder().countryName("Mozambique").countryCode("258").regex("\\(258\\)\\ ?[28]\\d{7,8}$").build());
-        countryDTOS.add(CountryDTO.builder().countryName("Uganda").countryCode("256").regex("\\(256\\)\\ ?\\d{9}$").build());
+        countryDTOS.add(CountryDTO.builder().countryName(CountryEnum.CAMEROON.getCountryName()).countryCode(CountryEnum.CAMEROON.getCode()).regex(CountryEnum.CAMEROON.getRegex()).build());
+        countryDTOS.add(CountryDTO.builder().countryName(CountryEnum.ETHIOPIA.getCountryName()).countryCode(CountryEnum.ETHIOPIA.getCode()).regex(CountryEnum.ETHIOPIA.getRegex()).build());
+        countryDTOS.add(CountryDTO.builder().countryName(CountryEnum.MOROCCO.getCountryName()).countryCode(CountryEnum.MOROCCO.getCode()).regex(CountryEnum.MOROCCO.getRegex()).build());
+        countryDTOS.add(CountryDTO.builder().countryName(CountryEnum.MOZAMBIQUE.getCountryName()).countryCode(CountryEnum.MOZAMBIQUE.getCode()).regex(CountryEnum.MOZAMBIQUE.getRegex()).build());
+        countryDTOS.add(CountryDTO.builder().countryName(CountryEnum.UGANDA.getCountryName()).countryCode(CountryEnum.UGANDA.getCode()).regex(CountryEnum.UGANDA.getRegex()).build());
 
         return countryDTOS;
     }
