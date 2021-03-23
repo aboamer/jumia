@@ -3,6 +3,11 @@
 A simple spring boot project using spring thymleaf for front end - it validates existing customers phones and detect the country they belong to by the code in phones
 You can filter by state of phone number whether it is VALID or INVALID .. you can combine the filtration with country name from five countries
 Unit tests are already done for this project with mocked dependencies to run in isolation and have single responsibility priniciple achieved
+
+Swagger is enabled on the following links:
+
+http://localhost:8080/swagger-ui.html
+http://localhost:8080/v2/api-docs
 ```
 
 ## Steps to run project
