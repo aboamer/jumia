@@ -1,7 +1,7 @@
 FROM maven:3.6-jdk-8 as maven
 WORKDIR /app
 COPY ./pom.xml ./pom.xml
-COPY ./sample.db ./sample.db
+COPY ./sample.db ./app/sample.db
 RUN mvn dependency:go-offline -B
 COPY ./src ./src
 
