@@ -1,18 +1,16 @@
 FROM maven:3.6-jdk-8 as maven
 WORKDIR /app
 COPY ./pom.xml ./pom.xml
-COPY ./sample.db ./app/sample.db
 RUN mvn dependency:go-offline -B
 COPY ./src ./src
 
-RUN mvn package && cp target/phonevalidator-0.0.1.jar app.jar && cp sample.db sample.db
+RUN mvn package && cp target/phonevalidator-0.0.1.jar app.jar
 
 # Rely on Docker's multi-stage build to get a smaller image based on JRE
 FROM openjdk:8-jre-alpine
 LABEL maintainer="xxxxx@xxx.com"
 WORKDIR /app
 COPY --from=maven /app/app.jar ./app.jar
-COPY --from=maven /app/sample.db ./sample.db
 
 # VOLUME /tmp  # optional
 EXPOSE 8080
